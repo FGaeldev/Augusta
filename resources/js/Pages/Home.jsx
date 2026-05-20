@@ -1,153 +1,370 @@
-import { Link } from "@inertiajs/react";
-import { usePage } from "@inertiajs/react";
-import MainLayout from "../Layouts/MainLayout";
-
 /**
- * Home Page — Golden Sky Travel & Tours landing page.
+ * Home.jsx
  *
- * Hero section with full-height background, brand identity,
- * tagline, and CTAs. Adapts CTAs based on auth state.
+ * Purpose: Augusta landing page — "Wall of Photos" for the group.
+ * Context: Public-facing page. Shows the group's member photo wall,
+ *          a royal motto section, and auth-aware CTAs.
  *
- * Design tokens from app.css control all colors/fonts.
- * Edit tokens there — no changes needed here to retheme.
+ * Dependencies:
+ *   - @inertiajs/react (Link, usePage)
+ *   - ../Layouts/MainLayout
+ *   - Design tokens from resources/css/app.css
  *
  * Sections:
- *   - Hero: full viewport, background image, overlay, CTAs
- *   - Features: three USP cards (outdoorsy, light bg)
- *   - Trust bar: accreditation logos placeholder
+ *   1. Hero      — full-viewport crest + group name + CTA
+ *   2. Wall      — masonry-style photo grid of members
+ *   3. Motto     — group tagline / programmer oath banner
+ *
+ * Auth-aware:
+ *   Guest        → "Join the Order" + "Sign In" CTAs
+ *   Authenticated → "View Profile" CTA
+ *
+ * Photo data is static placeholder — swap `MEMBERS` array
+ * with real data from backend props when ready.
  */
+
+import { Link, usePage } from "@inertiajs/react";
+import MainLayout from "../Layouts/MainLayout";
+
+// ---------------------------------------------------------------------------
+// Static member data — replace with Inertia props from backend when ready.
+// Each entry: { id, name, role, photoUrl, tag }
+// `tag` is the programmer title shown on the nameplate.
+// ---------------------------------------------------------------------------
+const MEMBERS = [
+    {
+        id: 1,
+        name: "Aragorn",
+        tag: "Systems Architect",
+        photoUrl: null,
+        initials: "AR",
+        hue: 220,
+    },
+    {
+        id: 2,
+        name: "Legolas",
+        tag: "Frontend Dev",
+        photoUrl: null,
+        initials: "LG",
+        hue: 160,
+    },
+    {
+        id: 3,
+        name: "Gimli",
+        tag: "Database Admin",
+        photoUrl: null,
+        initials: "GM",
+        hue: 30,
+    },
+    {
+        id: 4,
+        name: "Gandalf",
+        tag: "DevOps Wizard",
+        photoUrl: null,
+        initials: "GN",
+        hue: 260,
+    },
+    {
+        id: 5,
+        name: "Frodo",
+        tag: "QA Engineer",
+        photoUrl: null,
+        initials: "FR",
+        hue: 10,
+    },
+    {
+        id: 6,
+        name: "Samwise",
+        tag: "Backend Dev",
+        photoUrl: null,
+        initials: "SW",
+        hue: 100,
+    },
+    {
+        id: 7,
+        name: "Boromir",
+        tag: "Security Lead",
+        photoUrl: null,
+        initials: "BR",
+        hue: 350,
+    },
+    {
+        id: 8,
+        name: "Merry",
+        tag: "UI Designer",
+        photoUrl: null,
+        initials: "MR",
+        hue: 190,
+    },
+    {
+        id: 9,
+        name: "Pippin",
+        tag: "Junior Dev",
+        photoUrl: null,
+        initials: "PP",
+        hue: 55,
+    },
+];
+
+// ---------------------------------------------------------------------------
+// MemberCard — one framed portrait in the wall.
+// Shows photo if available, else a monogram on a tinted background.
+// ---------------------------------------------------------------------------
+function MemberCard({ member }) {
+    return (
+        <div className="photo-frame">
+            {/* Portrait area — fixed aspect ratio */}
+            <div
+                style={{
+                    width: "100%",
+                    aspectRatio: "3/4",
+                    borderRadius: "2px",
+                    overflow: "hidden",
+                    position: "relative",
+                    backgroundColor: `hsl(${member.hue}, 28%, 22%)`,
+                }}
+            >
+                {member.photoUrl ? (
+                    <img
+                        src={member.photoUrl}
+                        alt={member.name}
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            display: "block",
+                        }}
+                    />
+                ) : (
+                    // Monogram placeholder when no photo supplied
+                    <div
+                        style={{
+                            width: "100%",
+                            height: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            flexDirection: "column",
+                            gap: "0.5rem",
+                            // Subtle vignette gradient over tinted bg
+                            background: `radial-gradient(ellipse at 50% 40%, hsl(${member.hue},30%,32%) 0%, hsl(${member.hue},20%,14%) 100%)`,
+                        }}
+                    >
+                        <span
+                            style={{
+                                fontFamily: "var(--font-heading)",
+                                fontSize: "2.25rem",
+                                fontWeight: 700,
+                                color: "var(--color-primary)",
+                                letterSpacing: "0.08em",
+                                lineHeight: 1,
+                            }}
+                        >
+                            {member.initials}
+                        </span>
+                        {/* Thin gold rule beneath initials */}
+                        <div
+                            style={{
+                                width: 32,
+                                height: 1,
+                                backgroundColor: "var(--color-primary)",
+                                opacity: 0.5,
+                            }}
+                        />
+                    </div>
+                )}
+            </div>
+
+            {/* Nameplate */}
+            <div className="name-plate" title={member.tag}>
+                {member.name}
+            </div>
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// OrnamentalDivider — reusable gold-flanked symbol row
+// ---------------------------------------------------------------------------
+function OrnamentalDivider({ symbol = "✦" }) {
+    return (
+        <div
+            style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "1rem",
+                maxWidth: 280,
+                margin: "0 auto",
+            }}
+        >
+            <div
+                style={{
+                    flex: 1,
+                    height: 1,
+                    background:
+                        "linear-gradient(to right, transparent, var(--color-primary))",
+                    opacity: 0.7,
+                }}
+            />
+            <span
+                style={{
+                    color: "var(--color-primary)",
+                    fontSize: "0.75rem",
+                    opacity: 0.8,
+                }}
+            >
+                {symbol}
+            </span>
+            <div
+                style={{
+                    flex: 1,
+                    height: 1,
+                    background:
+                        "linear-gradient(to left, transparent, var(--color-primary))",
+                    opacity: 0.7,
+                }}
+            />
+        </div>
+    );
+}
+
+// ---------------------------------------------------------------------------
+// Home — main export
+// ---------------------------------------------------------------------------
 export default function Home() {
     const { auth } = usePage().props;
     const user = auth?.user;
 
     return (
         <MainLayout>
-            {/* ── Hero Section ── */}
-            <div
+
+            {/* ── 1. Hero ─────────────────────────────────────────────── */}
+            <section
                 style={{
-                    position: "relative",
                     minHeight: "100vh",
-                    backgroundImage: "url('/background.jpg')",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    backgroundAttachment: "fixed",
+                    backgroundColor: "var(--color-secondary-dark)",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
                     textAlign: "center",
-                    padding: "2rem 1.5rem",
+                    padding: "5rem 1.5rem 4rem",
+                    position: "relative",
+                    overflow: "hidden",
                 }}
             >
-                {/* Overlay — light navy tint, not fully dark */}
+                {/* Background: radial gold glow from center — atmospheric */}
                 <div
+                    aria-hidden="true"
                     style={{
                         position: "absolute",
                         inset: 0,
                         background:
-                            "linear-gradient(to bottom, rgba(26,43,95,0.65) 0%, rgba(26,43,95,0.45) 50%, rgba(26,43,95,0.75) 100%)",
+                            "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(201,168,76,0.07) 0%, transparent 70%)",
+                        pointerEvents: "none",
+                    }}
+                />
+
+                {/* Subtle grid pattern — programmer aesthetic over royal base */}
+                <div
+                    aria-hidden="true"
+                    style={{
+                        position: "absolute",
+                        inset: 0,
+                        backgroundImage:
+                            "linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px)",
+                        backgroundSize: "48px 48px",
+                        pointerEvents: "none",
                     }}
                 />
 
                 {/* Content */}
                 <div
-                    style={{ position: "relative", zIndex: 10, maxWidth: 700 }}
+                    style={{
+                        position: "relative",
+                        zIndex: 10,
+                        maxWidth: 680,
+                    }}
                 >
-                    {/* Eyebrow */}
-                    <div
-                        style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "0.5rem",
-                            backgroundColor: "rgba(212,160,23,0.15)",
-                            border: "1px solid rgba(212,160,23,0.4)",
-                            borderRadius: "9999px",
-                            padding: "0.375rem 1rem",
-                            marginBottom: "1.5rem",
-                        }}
+                    {/* Crown SVG — large decorative crest */}
+                    <svg
+                        width="56"
+                        height="44"
+                        viewBox="0 0 56 44"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style={{ marginBottom: "1.5rem", opacity: 0.9 }}
+                        aria-hidden="true"
                     >
-                        <span
-                            style={{
-                                fontFamily: "var(--font-body)",
-                                fontWeight: 700,
-                                fontSize: "1.25rem",
-                                letterSpacing: "0.15em",
-                                textTransform: "uppercase",
-                                color: "var(--color-primary)",
-                            }}
-                        >
-                            Travel & Tours
-                        </span>
-                    </div>
+                        <path
+                            d="M3 40L10 14L22 28L28 8L34 28L46 14L53 40H3Z"
+                            fill="var(--color-primary)"
+                            stroke="var(--color-primary-dark)"
+                            strokeWidth="1.5"
+                            strokeLinejoin="round"
+                        />
+                        <rect
+                            x="3"
+                            y="40"
+                            width="50"
+                            height="3"
+                            rx="1.5"
+                            fill="var(--color-primary)"
+                        />
+                        {/* Jewel dots on crown peaks */}
+                        <circle cx="10" cy="14" r="2.5" fill="var(--color-primary-dark)" />
+                        <circle cx="28" cy="8" r="2.5" fill="var(--color-primary-dark)" />
+                        <circle cx="46" cy="14" r="2.5" fill="var(--color-primary-dark)" />
+                    </svg>
 
-                    {/* Brand name */}
+                    {/* Eyebrow */}
+                    <span
+                        className="eyebrow"
+                        style={{ marginBottom: "1rem", display: "block" }}
+                    >
+                        The Order of
+                    </span>
+
+                    {/* Main wordmark */}
                     <h1
                         style={{
                             fontFamily: "var(--font-heading)",
                             fontWeight: 900,
-                            fontSize: "clamp(3rem, 8vw, 6rem)",
-                            color: "#FFFFFF",
-                            lineHeight: 1.1,
-                            marginBottom: "0.5rem",
-                            textShadow: "0 2px 20px rgba(0,0,0,0.3)",
+                            fontSize: "clamp(3.5rem, 10vw, 7rem)",
+                            color: "var(--color-primary)",
+                            lineHeight: 1,
+                            letterSpacing: "0.12em",
+                            textTransform: "uppercase",
+                            marginBottom: "1.5rem",
+                            // Gold text shimmer via text-shadow layers
+                            textShadow:
+                                "0 0 40px rgba(201,168,76,0.3), 0 2px 4px rgba(0,0,0,0.5)",
                         }}
                     >
-                        Golden Sky
+                        Augusta
                     </h1>
 
-                    {/* Gold divider */}
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "1rem",
-                            margin: "1.5rem auto",
-                            maxWidth: 300,
-                        }}
-                    >
-                        <div
-                            style={{
-                                flex: 1,
-                                height: 1,
-                                backgroundColor: "var(--color-primary)",
-                                opacity: 0.6,
-                            }}
-                        />
-                        <span
-                            style={{
-                                color: "var(--color-primary)",
-                                fontSize: "1rem",
-                            }}
-                        >
-                            ✦
-                        </span>
-                        <div
-                            style={{
-                                flex: 1,
-                                height: 1,
-                                backgroundColor: "var(--color-primary)",
-                                opacity: 0.6,
-                            }}
-                        />
-                    </div>
+                    <OrnamentalDivider />
 
                     {/* Tagline */}
                     <p
                         style={{
                             fontFamily: "var(--font-body)",
-                            fontSize: "clamp(1rem, 2.5vw, 1.25rem)",
-                            color: "rgba(255,255,255,0.85)",
-                            lineHeight: 1.7,
+                            fontSize: "clamp(1rem, 2.5vw, 1.2rem)",
+                            color: "rgba(247,244,239,0.65)",
+                            lineHeight: 1.8,
+                            marginTop: "1.5rem",
                             marginBottom: "2.5rem",
-                            fontWeight: 400,
+                            fontStyle: "italic",
+                            fontWeight: 300,
                         }}
                     >
-                        Explore the world with confidence.
+                        A fellowship of engineers, bound by craft and code.
                         <br />
-                        Your journey begins with Golden Sky.
+                        Forged in the halls of computation.
                     </p>
 
-                    {/* CTAs */}
+                    {/* CTAs — auth-aware */}
                     <div
                         style={{
                             display: "flex",
@@ -159,14 +376,14 @@ export default function Home() {
                         {!user && (
                             <>
                                 <Link href="/register" className="btn-primary">
-                                    Start Your Journey
+                                    Join the Order
                                 </Link>
                                 <Link
                                     href="/login"
                                     className="btn-secondary"
                                     style={{
-                                        color: "white",
-                                        borderColor: "rgba(255,255,255,0.6)",
+                                        color: "rgba(247,244,239,0.8)",
+                                        borderColor: "rgba(247,244,239,0.3)",
                                     }}
                                 >
                                     Sign In
@@ -175,242 +392,181 @@ export default function Home() {
                         )}
                         {user && (
                             <Link href="/profile" className="btn-primary">
-                                My Profile
+                                My Chamber
                             </Link>
                         )}
                     </div>
                 </div>
 
-                {/* Scroll indicator */}
+                {/* Scroll cue */}
                 <div
                     style={{
                         position: "absolute",
                         bottom: "2rem",
                         left: "50%",
                         transform: "translateX(-50%)",
-                        color: "rgba(255,255,255,0.5)",
-                        fontSize: "0.75rem",
-                        fontFamily: "var(--font-body)",
-                        letterSpacing: "0.1em",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        gap: "0.5rem",
+                        gap: "0.4rem",
+                        color: "rgba(201,168,76,0.4)",
+                        fontFamily: "var(--font-heading)",
+                        fontSize: "0.55rem",
+                        letterSpacing: "0.2em",
+                        textTransform: "uppercase",
                     }}
                 >
-                    <span>SCROLL</span>
-                    <span style={{ fontSize: "1rem" }}>↓</span>
+                    <span>Enter</span>
+                    <span style={{ fontSize: "0.9rem" }}>↓</span>
                 </div>
-            </div>
+            </section>
 
-            {/* ── Features Section ── */}
-            <div
+            {/* ── 2. Photo Wall ───────────────────────────────────────── */}
+            <section
                 style={{
                     backgroundColor: "var(--color-bg-alt)",
                     padding: "5rem 1.5rem",
+                    // Faint diagonal hatching — heraldic background texture
+                    backgroundImage:
+                        "repeating-linear-gradient(45deg, rgba(201,168,76,0.025) 0, rgba(201,168,76,0.025) 1px, transparent 0, transparent 50%)",
+                    backgroundSize: "12px 12px",
                 }}
             >
-                <div className="max-w-6xl mx-auto">
+                <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+
                     {/* Section heading */}
-                    <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-                        <p
-                            style={{
-                                fontFamily: "var(--font-body)",
-                                fontWeight: 700,
-                                fontSize: "0.75rem",
-                                letterSpacing: "0.15em",
-                                textTransform: "uppercase",
-                                color: "var(--color-primary)",
-                                marginBottom: "0.75rem",
-                            }}
+                    <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+                        <span
+                            className="eyebrow"
+                            style={{ marginBottom: "0.75rem", display: "block" }}
                         >
-                            Why Choose Us
-                        </p>
+                            The Fellowship
+                        </span>
                         <h2
+                            className="section-heading"
                             style={{
-                                fontFamily: "var(--font-heading)",
-                                fontWeight: 700,
                                 fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
-                                color: "var(--color-secondary)",
+                                marginBottom: "1rem",
                             }}
                         >
-                            Travel With Confidence
+                            Members of the Order
                         </h2>
+                        <OrnamentalDivider />
                     </div>
 
-                    {/* Feature cards */}
+                    {/* Photo grid — responsive columns, deliberate slight-rotate handled by CSS */}
                     <div
                         style={{
                             display: "grid",
                             gridTemplateColumns:
-                                "repeat(auto-fit, minmax(280px, 1fr))",
-                            gap: "1.5rem",
+                                "repeat(auto-fill, minmax(160px, 1fr))",
+                            gap: "1.75rem",
                         }}
                     >
-                        {[
-                            {
-                                icon: (
-                                    <svg
-                                        width="40"
-                                        height="40"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="var(--color-secondary)"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <circle cx="12" cy="12" r="10" />
-                                        <line x1="2" y1="12" x2="22" y2="12" />
-                                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                                    </svg>
-                                ),
-                                title: "International & Domestic",
-                                desc: "From local island hopping to global adventures — we cover every destination.",
-                            },
-                            {
-                                icon: (
-                                    <svg
-                                        width="40"
-                                        height="40"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="var(--color-secondary)"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                                    </svg>
-                                ),
-                                title: "DOT Accredited",
-                                desc: "Licensed, accredited, and trusted by thousands of travelers since day one.",
-                            },
-                            {
-                                icon: (
-                                    <svg
-                                        width="40"
-                                        height="40"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="var(--color-secondary)"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.28h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6 6l.94-.94a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-                                    </svg>
-                                ),
-                                title: "Full Service Agency",
-                                desc: "Flights, hotels, tours, visa assistance, travel insurance — all in one place.",
-                            },
-                        ].map((f) => (
+                        {MEMBERS.map((member, index) => (
+                            /*
+                             * Alternate slight rotation per card — gives pinned-photos-on-corkboard feel.
+                             * Even index: tiny clockwise tilt. Odd: tiny counter-clockwise.
+                             * Hover in .photo-frame CSS resets + lifts.
+                             */
                             <div
-                                key={f.title}
-                                className="card"
-                                style={{ textAlign: "center" }}
+                                key={member.id}
+                                style={{
+                                    transform: `rotate(${index % 2 === 0 ? 1.2 : -1.0}deg)`,
+                                    transition: "transform 0.3s ease",
+                                }}
                             >
-                                <div
-                                    style={{
-                                        marginBottom: "1rem",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                    }}
-                                >
-                                    {f.icon}
-                                </div>
-                                <h3
-                                    style={{
-                                        fontFamily: "var(--font-heading)",
-                                        fontWeight: 700,
-                                        fontSize: "1.1rem",
-                                        color: "var(--color-secondary)",
-                                        marginBottom: "0.75rem",
-                                    }}
-                                >
-                                    {f.title}
-                                </h3>
-                                <p
-                                    style={{
-                                        fontFamily: "var(--font-body)",
-                                        color: "var(--color-text-muted)",
-                                        lineHeight: 1.7,
-                                        fontSize: "0.95rem",
-                                    }}
-                                >
-                                    {f.desc}
-                                </p>
+                                <MemberCard member={member} />
                             </div>
                         ))}
                     </div>
-                </div>
-            </div>
 
-            {/* ── Trust Bar ── */}
-            <div
+                    {/* Member count footnote */}
+                    <p
+                        style={{
+                            textAlign: "center",
+                            marginTop: "3rem",
+                            fontFamily: "var(--font-body)",
+                            fontSize: "0.85rem",
+                            color: "var(--color-text-muted)",
+                            fontStyle: "italic",
+                        }}
+                    >
+                        {MEMBERS.length} members strong — and growing.
+                    </p>
+                </div>
+            </section>
+
+            {/* ── 3. Motto Banner ─────────────────────────────────────── */}
+            <section
                 style={{
                     backgroundColor: "var(--color-secondary)",
-                    padding: "2.5rem 1.5rem",
+                    borderTop: "2px solid var(--color-primary)",
+                    borderBottom: "2px solid var(--color-primary)",
+                    padding: "3.5rem 1.5rem",
                     textAlign: "center",
+                    position: "relative",
+                    overflow: "hidden",
                 }}
             >
-                <p
-                    style={{
-                        fontFamily: "var(--font-body)",
-                        fontWeight: 700,
-                        fontSize: "0.75rem",
-                        letterSpacing: "0.15em",
-                        textTransform: "uppercase",
-                        color: "var(--color-primary)",
-                        marginBottom: "1.5rem",
-                    }}
-                >
-                    Accredited & Trusted
-                </p>
+                {/* Faint radial glow behind motto text */}
                 <div
+                    aria-hidden="true"
                     style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        gap: "3rem",
-                        flexWrap: "wrap",
+                        position: "absolute",
+                        inset: 0,
+                        background:
+                            "radial-gradient(ellipse 60% 80% at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 70%)",
+                        pointerEvents: "none",
                     }}
-                >
-                    {[
-                        { label: "DOT", sub: "Accredited" },
-                        { label: "IATA", sub: "Member" },
-                        { label: "SKAL", sub: "Member" },
-                        { label: "TBL", sub: "Licensed" },
-                    ].map((badge) => (
-                        <div key={badge.label} style={{ textAlign: "center" }}>
-                            <div
-                                style={{
-                                    fontFamily: "var(--font-heading)",
-                                    fontWeight: 700,
-                                    fontSize: "1.25rem",
-                                    color: "var(--color-primary)",
-                                    letterSpacing: "0.1em",
-                                    lineHeight: 1,
-                                    marginBottom: "0.25rem",
-                                }}
-                            >
-                                {badge.label}
-                            </div>
-                            <div
-                                style={{
-                                    fontFamily: "var(--font-body)",
-                                    fontSize: "0.7rem",
-                                    letterSpacing: "0.1em",
-                                    textTransform: "uppercase",
-                                    color: "rgba(255,255,255,0.4)",
-                                }}
-                            >
-                                {badge.sub}
-                            </div>
-                        </div>
-                    ))}
+                />
+
+                <div style={{ position: "relative", zIndex: 1 }}>
+                    <span
+                        className="eyebrow"
+                        style={{ marginBottom: "1.25rem", display: "block" }}
+                    >
+                        Our Oath
+                    </span>
+
+                    {/* Motto — styled like a monumental inscription */}
+                    <blockquote
+                        style={{
+                            fontFamily: "var(--font-heading)",
+                            fontWeight: 700,
+                            fontSize: "clamp(1.1rem, 3vw, 1.6rem)",
+                            color: "var(--color-primary)",
+                            letterSpacing: "0.08em",
+                            lineHeight: 1.6,
+                            margin: "0 auto",
+                            maxWidth: 680,
+                            textTransform: "uppercase",
+                        }}
+                    >
+                        "We do not ship bugs to production.
+                        <br />
+                        We ship <em style={{ fontStyle: "italic", color: "rgba(201,168,76,0.75)" }}>legends</em>."
+                    </blockquote>
+
+                    <div style={{ marginTop: "1.5rem" }}>
+                        <OrnamentalDivider />
+                    </div>
+
+                    {/* Sub-caption in mono font — programmer flavor */}
+                    <p
+                        style={{
+                            marginTop: "1.25rem",
+                            fontFamily: "var(--font-mono)",
+                            fontSize: "0.75rem",
+                            color: "rgba(247,244,239,0.3)",
+                            letterSpacing: "0.08em",
+                        }}
+                    >
+                        // Augusta v1.0.0 — est. 2026
+                    </p>
                 </div>
-            </div>
+            </section>
+
         </MainLayout>
     );
 }

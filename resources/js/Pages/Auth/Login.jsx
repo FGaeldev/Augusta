@@ -61,7 +61,7 @@ export default function Login({ message, errors }) {
                                 fontSize: "0.95rem",
                             }}
                         >
-                            Sign in to your Golden Sky account
+                            Sign in to your Augusta account
                         </p>
                     </div>
 

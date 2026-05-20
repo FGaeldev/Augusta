@@ -1,50 +1,62 @@
 @import "tailwindcss";
 
 /* ============================================================
-   Golden Sky Design Tokens
-   Edit ONLY this section to retheme the entire site.
-   All components reference these variables.
+   Augusta — Design Tokens
+   Theme: Royal Programmer
+   Purpose: Wall-of-photos group site
+   Edit ONLY the :root block to retheme the entire app.
+   All components reference these CSS variables.
    ============================================================ */
+
+/* Google Fonts: Cinzel (regal display) + Crimson Pro (literary body) + JetBrains Mono */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+
 @layer base {
     :root {
-        /* Brand Colors */
-        --color-primary:        #D4A017; /* Gold — buttons, accents, highlights */
-        --color-primary-dark:   #B8960C; /* Gold hover state */
-        --color-primary-light:  #F5E6B3; /* Gold tint — backgrounds, badges */
+        /* ── Brand Palette ── */
+        --color-primary:          #C9A84C;   /* Antique gold — CTAs, accents, crests  */
+        --color-primary-dark:     #A8852E;   /* Gold hover state                      */
+        --color-primary-light:    #F2E4BE;   /* Gold tint — badges, subtle fills      */
 
-        --color-secondary:      #1A2B5F; /* Navy — nav, footer, headings */
-        --color-secondary-dark: #0F1E45; /* Navy dark — text */
-        --color-secondary-light:#2E4080; /* Navy light — hover states */
+        --color-secondary:        #1B1F3B;   /* Royal midnight navy — nav, headings   */
+        --color-secondary-dark:   #0E1124;   /* Deeper navy — footer, text            */
+        --color-secondary-light:  #2C3260;   /* Lighter navy — hover states           */
 
-        /* Backgrounds */
-        --color-bg:             #FFFFFF; /* Page background */
-        --color-bg-alt:         #F5F7FA; /* Section alternate background */
-        --color-bg-card:        #FFFFFF; /* Card background */
+        /* ── Backgrounds ── */
+        --color-bg:               #F7F4EF;   /* Aged parchment — main background      */
+        --color-bg-alt:           #EDE8DF;   /* Deeper parchment — section fills      */
+        --color-bg-card:          #FDFBF7;   /* Near-white card surface               */
 
-        /* Text */
-        --color-text:           #0F1E45; /* Primary text — dark navy */
-        --color-text-muted:     #6B7280; /* Secondary text — gray */
-        --color-text-light:     #FFFFFF; /* Text on dark backgrounds */
+        /* ── Text ── */
+        --color-text:             #1B1F3B;   /* Primary — royal midnight              */
+        --color-text-muted:       #6B6560;   /* Secondary — warm gray                 */
+        --color-text-light:       #F7F4EF;   /* On dark backgrounds                   */
 
-        /* Borders */
-        --color-border:         #E2E8F0; /* Default border */
-        --color-border-focus:   #D4A017; /* Input focus border — gold */
+        /* ── Borders ── */
+        --color-border:           #D8CFC2;   /* Warm parchment border                 */
+        --color-border-focus:     #C9A84C;   /* Gold focus ring on inputs             */
 
-        /* Status Colors */
-        --color-success:        #16A34A;
-        --color-warning:        #D97706;
-        --color-danger:         #DC2626;
-        --color-info:           #2563EB;
+        /* ── Status ── */
+        --color-success:          #2D6A2D;
+        --color-warning:          #B87010;
+        --color-danger:           #8B1A1A;
+        --color-info:             #1A3C6B;
 
-        /* Typography */
-        --font-heading:         'Playfair Display', Georgia, serif;
-        --font-body:            'Nunito', system-ui, sans-serif;
+        /* ── Typography ──
+           Cinzel:        Roman-inscribed serif — regal, all-caps authority
+           Crimson Pro:   Old-style serif — literary, warm, readable
+           JetBrains Mono: programmer mono — for code/ID elements
+        */
+        --font-heading:   'Cinzel', Georgia, serif;
+        --font-body:      'Crimson Pro', Georgia, serif;
+        --font-mono:      'JetBrains Mono', monospace;
 
-        /* Spacing & Shape */
-        --radius:               0.5rem;
-        --radius-lg:            1rem;
-        --shadow:               0 2px 8px rgba(26,43,95,0.08);
-        --shadow-lg:            0 8px 32px rgba(26,43,95,0.15);
+        /* ── Shape & Shadow ── */
+        --radius:         0.375rem;
+        --radius-lg:      0.75rem;
+        --shadow:         0 2px 8px rgba(27,31,59,0.10);
+        --shadow-lg:      0 8px 32px rgba(27,31,59,0.18);
+        --shadow-gold:    0 0 0 3px rgba(201,168,76,0.22);
     }
 }
 
@@ -52,34 +64,43 @@
    Base Styles
    ============================================================ */
 @layer base {
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
     body {
         background-color: var(--color-bg);
         color: var(--color-text);
         font-family: var(--font-body);
+        /* Subtle SVG grain — gives aged parchment texture without images */
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
     }
 
     h1, h2, h3, h4, h5, h6 {
         font-family: var(--font-heading);
         color: var(--color-secondary);
+        letter-spacing: 0.04em;
     }
 }
 
 /* ============================================================
-   Reusable Component Classes
+   Component Classes
    ============================================================ */
 @layer components {
-    /* Buttons */
+
+    /* ── Buttons ── */
+
     .btn-primary {
         background-color: var(--color-primary);
         color: var(--color-secondary-dark);
-        font-family: var(--font-body);
+        font-family: var(--font-heading);
         font-weight: 700;
         padding: 0.75rem 2rem;
         border-radius: var(--radius);
-        transition: all 0.2s;
-        letter-spacing: 0.05em;
+        transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
-        font-size: 0.875rem;
+        font-size: 0.75rem;
         border: 2px solid transparent;
         display: inline-block;
         cursor: pointer;
@@ -87,23 +108,25 @@
     .btn-primary:hover {
         background-color: var(--color-primary-dark);
         box-shadow: var(--shadow-lg);
+        transform: translateY(-1px);
     }
     .btn-primary:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+        transform: none;
     }
 
     .btn-secondary {
         background-color: transparent;
         color: var(--color-secondary);
-        font-family: var(--font-body);
+        font-family: var(--font-heading);
         font-weight: 600;
         padding: 0.75rem 2rem;
         border-radius: var(--radius);
-        transition: all 0.2s;
-        letter-spacing: 0.05em;
+        transition: background-color 0.2s, color 0.2s;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
-        font-size: 0.875rem;
+        font-size: 0.75rem;
         border: 2px solid var(--color-secondary);
         display: inline-block;
         cursor: pointer;
@@ -115,28 +138,30 @@
 
     .btn-danger {
         background-color: var(--color-danger);
-        color: white;
-        font-family: var(--font-body);
+        color: #FDF8F0;
+        font-family: var(--font-heading);
         font-weight: 700;
         padding: 0.75rem 2rem;
         border-radius: var(--radius);
-        transition: all 0.2s;
-        letter-spacing: 0.05em;
+        transition: background-color 0.2s, box-shadow 0.2s;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
-        font-size: 0.875rem;
+        font-size: 0.75rem;
         border: 2px solid transparent;
         display: inline-block;
         cursor: pointer;
     }
     .btn-danger:hover {
-        background-color: #B91C1C;
+        background-color: #6E1414;
+        box-shadow: var(--shadow-lg);
     }
 
-    /* Form Inputs */
+    /* ── Form Inputs ── */
+
     .input-field {
         width: 100%;
         padding: 0.75rem 1rem;
-        background-color: var(--color-bg);
+        background-color: var(--color-bg-card);
         border: 1.5px solid var(--color-border);
         border-radius: var(--radius);
         color: var(--color-text);
@@ -146,38 +171,44 @@
         outline: none;
     }
     .input-field:hover {
-        border-color: #CBD5E1;
+        border-color: var(--color-primary);
     }
     .input-field:focus {
         border-color: var(--color-border-focus);
-        box-shadow: 0 0 0 3px rgba(212,160,23,0.15);
+        box-shadow: var(--shadow-gold);
     }
     .input-field::placeholder {
-        color: #9CA3AF;
+        color: #B5ADA2;
+        font-style: italic;
     }
 
-    /* Labels */
+    /* ── Labels ── */
+
     .input-label {
         display: block;
-        font-family: var(--font-body);
-        font-weight: 700;
-        font-size: 0.75rem;
-        letter-spacing: 0.08em;
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 0.68rem;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
         color: var(--color-secondary);
         margin-bottom: 0.375rem;
     }
 
-    /* Cards */
+    /* ── Cards ── */
+
     .card {
         background-color: var(--color-bg-card);
+        /* Thin gold top line marks royalty; rest is warm border */
         border: 1.5px solid var(--color-border);
+        border-top: 2.5px solid var(--color-primary);
         border-radius: var(--radius-lg);
         padding: 1.5rem;
         box-shadow: var(--shadow);
     }
 
-    /* Section divider */
+    /* ── Ornamental Divider ── */
+
     .divider-gold {
         display: flex;
         align-items: center;
@@ -188,75 +219,145 @@
         content: '';
         flex: 1;
         height: 1px;
-        background-color: var(--color-primary-light);
+        /* Fade out toward edges — feels engraved */
+        background: linear-gradient(to right, transparent, var(--color-primary), transparent);
     }
 
-    /* Badges */
+    /* ── Badges ── */
+
     .badge {
         display: inline-block;
-        padding: 0.125rem 0.625rem;
-        border-radius: 9999px;
-        font-size: 0.7rem;
+        padding: 0.15rem 0.6rem;
+        /* Sharp 2px corners — more heraldic than pill shape */
+        border-radius: 2px;
+        font-size: 0.62rem;
         font-weight: 700;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.1em;
         text-transform: uppercase;
-        font-family: var(--font-body);
+        font-family: var(--font-heading);
     }
     .badge-gold {
         background-color: var(--color-primary-light);
         color: var(--color-primary-dark);
+        border: 1px solid rgba(201,168,76,0.4);
     }
     .badge-navy {
-        background-color: #E8ECF7;
+        background-color: #E4E7F5;
         color: var(--color-secondary);
     }
     .badge-success {
-        background-color: #DCFCE7;
+        background-color: #E6F4E6;
         color: var(--color-success);
     }
     .badge-warning {
-        background-color: #FEF3C7;
+        background-color: #FEF3D8;
         color: var(--color-warning);
     }
     .badge-danger {
-        background-color: #FEE2E2;
+        background-color: #F9EDED;
         color: var(--color-danger);
     }
 
-    /* Error text */
+    /* ── Error Text ── */
+
     .error-text {
         color: var(--color-danger);
         font-size: 0.875rem;
         font-family: var(--font-body);
+        font-style: italic;
         margin-top: 0.25rem;
     }
 
-    /* Flash/alert */
+    /* ── Flash / Alerts ── */
+
+    /* Left accent bar distinguishes alert type at a glance */
     .alert-success {
-        background-color: #F0FDF4;
-        border: 1.5px solid #86EFAC;
-        color: #166534;
+        background-color: #EDF7ED;
+        border: 1.5px solid #A8D5A8;
+        border-left: 4px solid var(--color-success);
+        color: #1F4D1F;
         padding: 0.75rem 1rem;
         border-radius: var(--radius);
         font-family: var(--font-body);
-        font-size: 0.875rem;
+        font-size: 0.95rem;
     }
     .alert-info {
-        background-color: #EFF6FF;
-        border: 1.5px solid #93C5FD;
-        color: #1E40AF;
+        background-color: #EAF0FA;
+        border: 1.5px solid #9DB8E8;
+        border-left: 4px solid var(--color-info);
+        color: #1A3464;
         padding: 0.75rem 1rem;
         border-radius: var(--radius);
         font-family: var(--font-body);
-        font-size: 0.875rem;
+        font-size: 0.95rem;
     }
     .alert-warning {
-        background-color: #FFFBEB;
-        border: 1.5px solid #FCD34D;
-        color: #92400E;
+        background-color: #FEF8E8;
+        border: 1.5px solid #E8C87A;
+        border-left: 4px solid var(--color-warning);
+        color: #7A4A0A;
         padding: 0.75rem 1rem;
         border-radius: var(--radius);
         font-family: var(--font-body);
-        font-size: 0.875rem;
+        font-size: 0.95rem;
+    }
+
+    /* ── Photo Wall — Member Card ──
+       Used on Home.jsx photo wall grid.
+       Frame lifts on hover to simulate picking up a photo.
+    ── */
+
+    .photo-frame {
+        background-color: var(--color-bg-card);
+        border: 2px solid var(--color-border);
+        border-radius: var(--radius);
+        padding: 0.5rem 0.5rem 0;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: default;
+    }
+    .photo-frame:hover {
+        transform: translateY(-6px) rotate(0.8deg);
+        box-shadow: 0 20px 48px rgba(27,31,59,0.22);
+    }
+    /* Thin gold inset line — picture frame detail */
+    .photo-frame::after {
+        content: '';
+        position: absolute;
+        inset: 6px 6px 28px 6px; /* bottom stops before name plate */
+        border: 1px solid rgba(201,168,76,0.25);
+        border-radius: 1px;
+        pointer-events: none;
+    }
+
+    /* Dark nameplate strip at bottom of photo card */
+    .name-plate {
+        background-color: var(--color-secondary);
+        color: var(--color-primary);
+        font-family: var(--font-heading);
+        font-size: 0.62rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-align: center;
+        padding: 0.375rem 0.25rem;
+        margin: 0.375rem -0.5rem 0;
+        border-radius: 0 0 var(--radius) var(--radius);
+        /* Slight overflow clamp */
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    /* Eyebrow label — small gold caps above section headings */
+    .eyebrow {
+        font-family: var(--font-heading);
+        font-weight: 600;
+        font-size: 0.62rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--color-primary);
+        display: block;
     }
 }

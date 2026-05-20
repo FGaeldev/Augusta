@@ -131,7 +131,7 @@ export default function Profile({ user }) {
                                 fontSize: "0.95rem",
                             }}
                         >
-                            Manage your Golden Sky account
+                            Manage your Augusta account
                         </p>
                     </div>
 

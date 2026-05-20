@@ -89,7 +89,7 @@ export default function Register({ errors }) {
                                 fontSize: "0.95rem",
                             }}
                         >
-                            Join Golden Sky Travel & Tours
+                            Join the Order of Augusta
                         </p>
                     </div>
 
